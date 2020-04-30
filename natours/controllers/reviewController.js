@@ -1,30 +1,33 @@
 const Review = require('../models/reviewModel');
+const factory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
 
-exports.getAllReviews = catchAsync(async (req, res, next) => {
-    const reviews = await Review.find();
+exports.filterReviewsBasedOnTour = (req, res, next) => {
+    if (req.params.tourId) req.query.tour = req.params.tourId;
 
-    res.status(200).json({
-        status: 'success',
-        results: reviews.length,
-        data: {
-            reviews
-        }
-    });
+    next();
+};
+
+exports.setTourUserIds = (req, res, next) => {
+    // Allow nested routes
+    if (!req.body.tour) req.body.tour = req.params.tourId;
+    if (!req.body.user) req.body.user = req.user.id;
+
+    next();
+};
+
+exports.checkIfAuthor = catchAsync(async (req, res, next) => {
+    const review = await Review.findById(req.params.id);
+    if (req.user.role !== 'admin' || review.user.id !== req.user.id)
+        return next(
+            new AppError("You cannot edit or delete someone else's review", 403)
+        );
+    next();
 });
 
-exports.createReview = catchAsync(async (req, res, next) => {
-    const newReview = await Review.create({
-        review: req.body.review,
-        rating: req.body.rating,
-        tour: req.body.tour,
-        user: req.user
-    });
-
-    res.status(201).json({
-        status: 'success',
-        data: {
-            review: newReview
-        }
-    });
-});
+exports.getAllReviews = factory.getAll(Review);
+exports.getReview = factory.getOne(Review);
+exports.createReview = factory.createOne(Review);
+exports.updateReview = factory.updateOne(Review);
+exports.deleteReview = factory.deleteOne(Review);
