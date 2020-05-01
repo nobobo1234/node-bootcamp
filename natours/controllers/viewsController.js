@@ -18,7 +18,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
     });
 
     if (!tour) {
-        return next(new AppError('No tour found with that slug', 404));
+        return next(new AppError('No tour found with that name', 404));
     }
 
     res.status(200).render('tour', {
@@ -30,5 +30,11 @@ exports.getTour = catchAsync(async (req, res, next) => {
 exports.getLoginForm = (req, res) => {
     res.status(200).render('login', {
         title: 'Log in to your account'
+    });
+};
+
+exports.getAccount = (req, res) => {
+    res.status(200).render('account', {
+        title: 'Your account'
     });
 };

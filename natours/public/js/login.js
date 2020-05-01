@@ -1,5 +1,8 @@
 /* eslint-disable */
-const login = async (email, password) => {
+import axios from 'axios';
+import { showAlert } from './alerts';
+
+export const login = async (email, password) => {
     try {
         const res = await axios({
             url: '/api/v1/users/login',
@@ -11,31 +14,26 @@ const login = async (email, password) => {
         });    
 
         if (res.data.status === 'success') {
-            const formMessage = document.querySelector('.form__message');
-            formMessage.style.display = 'block';
-            formMessage.innerHTML = 'Logged in successfully';
+            showAlert('success', 'Logged in succesfully');
             setTimeout(() => {
                 location.assign('/');
             }, 1500);
         }
     } catch (err) {
-        const formMessage = document.querySelector('.form__message'); 
-        formMessage.style.display = 'block';
-        formMessage.innerHTML = err.response.data.message;
-
-        setTimeout(() => {
-            formMessage.style.display = 'none';
-        }, 2000);
+        showAlert('error', err.response.data.message);
     }
 }
 
-window.onload = () => {
-    document.querySelector('.form__message').style.display = 'none';
-    document.querySelector('.form').addEventListener('submit', e => {
-        e.preventDefault();
+export const logout = async () => {
+    try {
+        const res = await axios({
+            method: 'GET',
+            url: '/api/v1/users/logout'
+        });
 
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        login(email, password);
-    })
+        if (res.data.status === 'success') location.assign('/');
+    } catch (err) {
+        showAlert('error', 'Error logging out! Try again.')    
+    }
 }
+

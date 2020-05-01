@@ -1,6 +1,5 @@
 /* eslint-disable */
-window.onload = () => {
-    const locations = JSON.parse(document.getElementById('map').dataset.locations);
+export const displayMap = () => {
 
     mapboxgl.accessToken = 'pk.eyJ1Ijoibm9ib2JvIiwiYSI6ImNrOW1xa2loZTA2eXYzZm50NzV0MmE1NGsifQ.90ZpnAEdIhnwA720JavQag';
     var map = new mapboxgl.Map({
