@@ -24,6 +24,38 @@ export const login = async (email, password) => {
     }
 }
 
+export const checkPasswords = (passwordInput, passwordConfirmInput) => {
+    if (passwordInput.value != passwordConfirmInput.value) {
+        passwordConfirmInput.setCustomValidity('Password must be matching')
+    } else {
+        passwordConfirmInput.setCustomValidity('')
+    }
+}
+
+export const signup = async (name, email, password, passwordConfirm) => {
+    try {
+        const res = await axios({
+            url: '/api/v1/users/signup',
+            method: 'POST',
+            data: {
+                name,
+                email,
+                password,
+                passwordConfirm
+            }
+        });
+
+        if (res.data.status === 'success') {
+            showAlert('success', 'Created account succesfully');
+            setTimeout(() => {
+                location.assign('/');
+            }, 1500);
+        }
+    } catch (err) {
+        showAlert('error', err.response.data.message);
+    }
+}
+
 export const logout = async () => {
     try {
         const res = await axios({
