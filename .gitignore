@@ -2,3 +2,4 @@ config.env
 .cache/
 node_modules/
 users/
+tours/
